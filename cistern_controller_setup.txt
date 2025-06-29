@@ -1,0 +1,54 @@
+install prerequisites (mosquitto, wiringPi, etc.)
+
+Enable I2C on the Raspberry Pi via raspi-config if not already done.
+
+-----
+
+sudo apt update
+sudo apt install libi2c-dev i2c-tools
+
+
+-------
+
+gcc pump_control.c -o pump_control -l wiringPi -l mosquitto
+
+gcc pump_control.c -o pump_control -l wiringPi -l mosquitto && ./pump_control
+
+-------
+
+// enable mosquitto service at boot:
+
+sudo systemctl enable mosquitto.service
+
+
+------
+
+// API
+sudo apt install libmosquitto-dev
+
+-------
+
+
+// for testing - watch all
+mosquitto_sub -v -t '#'
+
+-------
+
+// run as service
+sudo nano /lib/systemd/system/pump_control.service
+
+add this:---
+[Unit]
+Description=Pump Control
+
+[Service]
+ExecStart=/home/admin/pump_control
+
+[Install]
+WantedBy=multi-user.target
+---
+
+sudo systemctl daemon-reload 
+sudo systemctl enable pump_control.service
+sudo systemctl start pump_control.service
+sudo systemctl status pump_control.service
